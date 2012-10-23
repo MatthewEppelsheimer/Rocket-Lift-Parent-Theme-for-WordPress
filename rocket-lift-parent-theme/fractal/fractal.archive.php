@@ -83,7 +83,7 @@
 	
 	<?php else : ?>
 	
-		<?php get_template_part( 'no-results', 'archive' ); ?>
+		<?php fractal_block( 'no-results', function(){ fractal_parent(); }); ?>
 	
 	<?php endif; ?>
 
