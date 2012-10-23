@@ -11,7 +11,6 @@
 <?php fractal_template(); ?>
 
 <?php fractal_block( 'content-loop-inside', function(){ ?>
-	<?php rocket_lift_parent_theme_content_nav( 'nav-above' ); ?>
 
 	<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
 		<header class="entry-header">
