@@ -12,7 +12,7 @@
 
 <?php fractal( 'base-override' ); ?>
 
-<?php fractal( 'comments', function(){?>
+<?php fractal_block( 'comments', function(){?>
 	<?php
 		/*
 		 * If the current post is protected by a password and
