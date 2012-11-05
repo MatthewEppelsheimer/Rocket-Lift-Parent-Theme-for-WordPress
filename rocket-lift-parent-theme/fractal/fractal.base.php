@@ -149,7 +149,7 @@
 		<script src="<?php echo get_template_directory_uri(); ?>/js/html5.js" type="text/javascript"></script>
 		<![endif]-->
 		
-		<?php wp_head(); ?>
+		<?php fractal_wp_head(); ?>
 	<?php }); /* end 'html-head' fractal block */ ?>
 	</head>
 
@@ -167,7 +167,7 @@
 					<h1 class="assistive-text"><?php _e( 'Menu', 'rocket_lift_parent_theme' ); ?></h1>
 					<div class="assistive-text skip-link"><a href="#content" title="<?php esc_attr_e( 'Skip to content', 'rocket_lift_parent_theme' ); ?>"><?php _e( 'Skip to content', 'rocket_lift_parent_theme' ); ?></a></div>
 		
-					<?php wp_nav_menu( array( 'theme_location' => 'primary' ) ); ?>
+					<?php fractal_wrap( function() { wp_nav_menu( array( 'theme_location' => 'primary' ) ); } ); ?>
 				</nav><!-- .site-navigation .main-navigation -->
 			</header><!-- #masthead .site-header -->
 		
@@ -298,7 +298,7 @@
 			
 		</div><!-- #page .hfeed .site -->
 		
-		<?php wp_footer(); ?>		
+		<?php fractal_wp_footer(); ?>		
 	<?php }); /* end 'html-body' fractal */ ?>
 	</body>
 

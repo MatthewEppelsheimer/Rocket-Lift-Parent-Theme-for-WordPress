@@ -6,17 +6,17 @@ fractal_template(); ?>
 <?php });?>
 
 <?php fractal_block( 'section-1', function() { ?>
-	<h2>sub-title</h2>
+	<h2>sub-title section 1 (from index-2)</h2>
 	<?php fractal_parent(); ?>
 <?php });?>
 
 <?php fractal_block( 'section-2', function(){?>
-	<h2>sub-title</h2>
+	<h2>sub-title section 2 (from index-2) </h2>
 	<?php fractal_parent(); ?>
 <?php });?>
 
 <?php fractal_block( 'section-3', function(){?>
-	<h2>sub-title</h2>
+	<h2>sub-title section 3 (from index-2)</h2>
 	<?php fractal_parent(); ?>
 <?php });
 
