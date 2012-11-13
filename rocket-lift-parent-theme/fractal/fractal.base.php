@@ -288,10 +288,8 @@
 			<footer id="colophon" class="site-footer" role="contentinfo">
 				<?php fractal_block( 'html-footer', function() { ?>
 					<div class="site-info">
-						<?php do_action( 'rocket_lift_parent_theme_credits' ); ?>
-						<a href="http://wordpress.org/" title="<?php esc_attr_e( 'A Semantic Personal Publishing Platform', 'rocket_lift_parent_theme' ); ?>" rel="generator"><?php printf( __( 'Proudly powered by %s', 'rocket_lift_parent_theme' ), 'WordPress' ); ?></a>
-						<span class="sep"> | </span>
-						<?php printf( __( 'Theme: %1$s by %2$s.', 'rocket_lift_parent_theme' ), 'rocket_lift_parent_theme', '<a href="http://automattic.com/" rel="designer">Automattic</a>' ); ?>
+						<?php do_action( 'rocket_lift_parent_theme_site_info' ); ?>
+						<?php do_action( 'rocket_lift_parent_theme_attribution' ); ?>
 					</div><!-- .site-info -->
 				<?php }); /* end 'html-footer' fractal */ ?>
 			</footer><!-- #colophon .site-footer -->

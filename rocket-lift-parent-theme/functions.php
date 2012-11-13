@@ -108,3 +108,11 @@ add_action( 'wp_enqueue_scripts', 'rocket_lift_parent_theme_scripts' );
 //require( get_template_directory() . '/inc/custom-header.php' );
 
 
+/**
+ *	Rocket Lift Attribution
+ */
+
+function rocket_lift_attribution() {
+	printf( __( 'Website designed and maintained by %1$s.', 'rocket_lift_parent_theme' ), '<a href="http://rocketlift.com/" rel="designer">Rocket Lift Inc</a>' );
+}
+add_action( 'rocket_lift_parent_theme_attribution', 'rocket_lift_attribution', 10 );
