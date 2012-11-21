@@ -99,6 +99,8 @@ function rocket_lift_parent_theme_scripts() {
 	if ( is_singular() && wp_attachment_is_image() ) {
 		wp_enqueue_script( 'keyboard-image-navigation', get_template_directory_uri() . '/js/keyboard-image-navigation.js', array( 'jquery' ), '20120202' );
 	}
+
+	wp_enqueue_script( 'theme-name-app.js', get_template_directory_uri() . '/js/theme-name-app.js', array( 'jquery' ) );
 }
 add_action( 'wp_enqueue_scripts', 'rocket_lift_parent_theme_scripts' );
 
