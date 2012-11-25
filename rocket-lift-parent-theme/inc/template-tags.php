@@ -2,8 +2,6 @@
 /**
  * Custom template tags for this theme.
  *
- * Eventually, some of the functionality here could be replaced by core features
- *
  * @package Rocket Lift Parent Theme
  * @since Rocket Lift Parent Theme 1.0
  */
@@ -171,5 +169,136 @@ function rocket_lift_parent_theme_category_transient_flusher() {
 	// Like, beat it. Dig?
 	delete_transient( 'all_the_cool_cats' );
 }
-add_action( 'edit_category', 'rocket_lift_parent_theme_category_transient_flusher' );
-add_action( 'save_post', 'rocket_lift_parent_theme_category_transient_flusher' );
+// add_action( 'edit_category', 'rocket_lift_parent_theme_category_transient_flusher' );
+// add_action( 'save_post', 'rocket_lift_parent_theme_category_transient_flusher' );
+
+/**
+ * Get an HTML img element representing an image attachment
+ * Based on wp_get_attachment_image(), without height and width.
+ *
+ * While $size will accept an array, it is better to register a size with
+ * add_image_size() so that a cropped version is generated. It's much more
+ * efficient than having to find the closest-sized image and then having the
+ * browser scale down the image.
+ *
+ * @since 2.0
+ * @see add_image_size()
+ * @uses apply_filters() Calls 'wp_get_attachment_image_attributes' hook on attributes array
+ * @uses wp_get_attachment_image_src() Gets attachment file URL and dimensions
+ * @since 2.5.0
+ *
+ * @param int $attachment_id Image attachment ID.
+ * @param string $size Optional, default is 'thumbnail'.
+ * @param bool $icon Optional, default is false. Whether it is an icon.
+ * @return string HTML img element or empty string on failure.
+ */
+function rli_library_wp_get_attachment_image_without_height_and_width($attachment_id, $size = 'thumbnail', $icon = false, $attr = '') {
+
+	$html = '';
+	$image = wp_get_attachment_image_src($attachment_id, $size, $icon);
+	if ( $image ) {
+		list($src, $width, $height) = $image;
+		if ( is_array($size) )
+			$size = join('x', $size);
+		$attachment =& get_post($attachment_id);
+		$default_attr = array(
+			'src'	=> $src,
+			'class'	=> "attachment-$size",
+			'alt'	=> trim(strip_tags( get_post_meta($attachment_id, '_wp_attachment_image_alt', true) )), // Use Alt field first
+			'title'	=> trim(strip_tags( $attachment->post_title )),
+		);
+		if ( empty($default_attr['alt']) )
+			$default_attr['alt'] = trim(strip_tags( $attachment->post_excerpt )); // If not, Use the Caption
+		if ( empty($default_attr['alt']) )
+			$default_attr['alt'] = trim(strip_tags( $attachment->post_title )); // Finally, use the title
+
+		$attr = wp_parse_args($attr, $default_attr);
+		$attr = apply_filters( 'wp_get_attachment_image_attributes', $attr, $attachment );
+		$attr = array_map( 'esc_attr', $attr );
+		$html = rtrim("<img ");
+		foreach ( $attr as $name => $value ) {
+			$html .= " $name=" . '"' . $value . '"';
+		}
+		$html .= ' />';
+	}
+
+	return $html;
+}
+
+/**
+ * Retrieve Post Thumbnail.
+ * Based on get_the_post_thumbnail().
+ *
+ * @since 2.0
+ * @param int $post_id Optional. Post ID.
+ * @param string $size Optional. Image size. Defaults to 'post-thumbnail'.
+ * @param string|array $attr Optional. Query string or array of attributes.
+ * @uses rli_library_wp_get_attachment_image_without_height_and_width
+ */
+function rli_library_get_the_post_thumbnail_without_height_and_width( $post_id = null, $size = 'post-thumbnail', $attr = '' ) {
+	$post_id = ( null === $post_id ) ? get_the_ID() : $post_id;
+	$post_thumbnail_id = get_post_thumbnail_id( $post_id );
+	$size = apply_filters( 'post_thumbnail_size', $size );
+	if ( $post_thumbnail_id ) {
+		do_action( 'begin_fetch_post_thumbnail_html', $post_id, $post_thumbnail_id, $size ); // for "Just In Time" filtering of all of wp_get_attachment_image()'s filters
+		if ( in_the_loop() )
+			update_post_thumbnail_cache();
+		$html = rli_library_wp_get_attachment_image_without_height_and_width( $post_thumbnail_id, $size, false, $attr );
+		do_action( 'end_fetch_post_thumbnail_html', $post_id, $post_thumbnail_id, $size );
+	} else {
+		$html = '';
+	}
+	return apply_filters( 'post_thumbnail_html', $html, $post_id, $post_thumbnail_id, $size, $attr );
+}
+
+/**
+ *	Disable automatic attachment linking
+ */
+ 
+function rli_library_disable_attachment_link( $input, $id, $size, $permalink, $icon, $text ){
+	$id = intval( $id );
+	$_post = & get_post( $id );
+	
+	if ( $text )
+		$link_text = $text;
+	elseif ( $size && 'none' != $size )
+		$link_text = wp_get_attachment_image( $id, $size, $icon );
+	else
+		$link_text = '';
+		
+	if ( trim( $link_text ) == '' )
+		$link_text = $_post->post_title;
+	
+	return $link_text;
+}
+// To use, add this in a theme or plugin:
+// add_filter( 'wp_get_attachment_link', 'rli_library_disable_attachment_link', 10, 6 );
+
+/**
+ * Retrieve edit posts link for post with an option ECHO OR RETURN them
+ * Based on edit_post_link() in wp-includes/link-template.php
+ *
+ *
+ * @param string $link Optional. Anchor text.
+ * @param string $before Optional. Display before edit link.
+ * @param string $after Optional. Display after edit link.
+ * @param int $id Optional. Post ID.
+ * @param bool $echo Optional. Defaults to true to echo. False to return. 
+ */
+function rli_library_edit_post_link( $link = null, $before = '', $after = '', $id = 0 , $echo = true ) {
+	if ( !$post = &get_post( $id ) )
+		return;
+
+	if ( !$url = get_edit_post_link( $post->ID ) )
+		return;
+
+	if ( null === $link )
+		$link = __('Edit This');
+
+	$post_type_obj = get_post_type_object( $post->post_type );
+	$link = '<a class="post-edit-link" href="' . $url . '" title="' . esc_attr( $post_type_obj->labels->edit_item ) . '">' . $link . '</a>';
+	if ( $echo )
+		echo $before . apply_filters( 'edit_post_link', $link, $post->ID ) . $after;
+	else
+		return $before . apply_filters( 'edit_post_link', $link, $post->ID ) . $after;
+}

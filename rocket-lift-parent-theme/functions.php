@@ -27,15 +27,25 @@ if ( ! function_exists( 'rocket_lift_parent_theme_setup' ) ):
 function rocket_lift_parent_theme_setup() {
 
 	/**
+	 * Utilities
+	 */
+	require( get_template_directory() . '/inc/utilities.php' );
+
+	/**
 	 * Custom template tags for this theme.
 	 */
 	require( get_template_directory() . '/inc/template-tags.php' );
 
 	/**
+	 * Custom Walkers
+	 */
+	require( get_template_directory() . '/inc/walkers.php' );
+
+	/**
 	 * Custom Theme Options
 	 */
 	require( get_template_directory() . '/inc/theme-options/theme-options.php' );
-
+	
 	/**
 	 * Make theme available for translation
 	 * Translations can be filed in the /languages/ directory
@@ -99,8 +109,6 @@ function rocket_lift_parent_theme_scripts() {
 	if ( is_singular() && wp_attachment_is_image() ) {
 		wp_enqueue_script( 'keyboard-image-navigation', get_template_directory_uri() . '/js/keyboard-image-navigation.js', array( 'jquery' ), '20120202' );
 	}
-
-	wp_enqueue_script( 'theme-name-app.js', get_template_directory_uri() . '/js/theme-name-app.js', array( 'jquery' ) );
 }
 add_action( 'wp_enqueue_scripts', 'rocket_lift_parent_theme_scripts' );
 
